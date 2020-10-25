@@ -4,7 +4,7 @@
   register: virt_networks
   tags:
     - kvm
-    - virt_pool
+    - virt_network
 
 - name: Create network1
   virt_net:

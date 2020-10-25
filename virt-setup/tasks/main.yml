@@ -12,3 +12,14 @@
   import_tasks: networks.yaml
   tags:
     - virt_network
+
+- name: Workaround rhel8 qcow2
+  include_tasks: rhel8_qcow_workaround.yaml
+  tags: 
+    - rhel8_qcow2_workaround
+
+- name: Create a VM
+  include_tasks:  virtual_machine.yaml
+  tags:
+    - create_vm
+    - launch_vm
