@@ -43,6 +43,14 @@
   tags:
     - rhel8_qcow2_workaround
 
+- name: SSH fix
+  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config"
+  environment:
+    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_BACKEND: direct
+  tags:
+    - rhel8_qcow2_workaround
+
 - name: Clear ifcfg-eth0 file
   shell: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command 'rm /etc/sysconfig/network-scripts/ifcfg-eth0 '
   ignore_errors: yes
