@@ -30,7 +30,7 @@
     - rhel8_qcow2_workaround
 
 - name: Create virtual machine from backing file
-  shell: qemu-img create -f qcow2 -b {{ vm_directory}}/rhel8_base.qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2
+  shell: qemu-img create -f qcow2 -b {{ vm_directory}}/rhel8_base.qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
   tags:
     - create_vm
 
@@ -44,7 +44,8 @@
     - rhel8_qcow2_workaround
 
 - name: SSH fix
-  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config"
+  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config" --selinux-relabel
+  ignore_errors: yes
   environment:
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct

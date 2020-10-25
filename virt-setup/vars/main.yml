@@ -11,7 +11,7 @@ virt_packages:
   - libguestfs-xfs
 storage_pool_name: "rhosp"
 storage_pool_directory: /opt/test
-network1_name: "default"
+network1_name: "osp_mgmt"
 network2_name: "osp"
 rhel8_qcow2_file: /root/rhel-8.2-x86_64-kvm.qcow2
 vm_directory: /opt/

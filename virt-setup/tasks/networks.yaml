@@ -9,7 +9,7 @@
 - name: Create network1
   virt_net:
     command: define
-    name: "{{ network1_name | default('default') }}"
+    name: "{{ network1_name | default('osp_mgmt') }}"
     xml: '{{ lookup("template", "templates/network1.j2") }}'
   tags:
     - kvm

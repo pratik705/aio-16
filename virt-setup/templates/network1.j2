@@ -1,5 +1,5 @@
 <network>
-  <name>{{ network1_name | default(default) }}</name>
+  <name>{{ network1_name | default(osp_mgmt) }}</name>
   <forward mode='nat'>
     <nat>
       <port start='1024' end='65535'/>

@@ -1,2 +1,6 @@
 [local]
 localhost ansible_connection=local
+
+
+[aio]
+192.168.150.50
