@@ -1,0 +1,14 @@
+---
+# tasks file for virt-setup
+- name: Install packages
+  include_tasks: packages.yaml
+
+- name: Configure storage pool
+  include_tasks: storage_pool.yaml
+  tags:
+    - virt_pool
+
+- name: Configure networks
+  import_tasks: networks.yaml
+  tags:
+    - virt_network

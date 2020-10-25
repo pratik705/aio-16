@@ -1,0 +1,5 @@
+---
+- name: Deploy AIO
+  hosts: local
+  roles:
+    - virt-setup

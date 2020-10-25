@@ -1,0 +1,34 @@
+- name: gather facts on existing virsh pool
+  virt_pool:
+    command: facts
+  register: virt_pool
+  tags:
+    - kvm
+    - virt_pool
+
+- name: Create a storage pool directory
+  file:
+    path: "{{ storage_pool_directory }}"
+    state: directory
+  tags:
+    - kvm
+    - virt_pool
+
+- name: Create a storage pool
+  virt_pool:
+    command: define
+    mode: new
+    name: "{{ storage_pool_name }}"
+    xml: '{{ lookup("template", "templates/storage_pool.j2") }}'
+    state: active
+  tags:
+    - kvm
+    - virt_pool
+
+- name: Autostart the storage pool
+  virt_pool:
+    name: "{{ storage_pool_name }}"
+    autostart: yes
+  tags:
+    - kvm
+    - virt_pool

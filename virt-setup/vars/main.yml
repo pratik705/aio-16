@@ -1,0 +1,25 @@
+---
+# vars file for virt-setup
+virt_packages:
+  - virt-install
+  - libvirt-python
+  - virt-install
+  - libvirt-client
+  - qemu-kvm
+  - qemu-img
+  - rhel-guest-image-7
+  - libguestfs-tools
+  - libguestfs-xfs
+storage_pool_name: "rhosp"
+storage_pool_directory: /opt/test
+network1_name: "default"
+network2_name: "osp"
+vm_directory: /opt/
+vm_name: aio-16
+vm_size: 60G
+vm_root_password: RedHat1!
+vm_hostname: aio-16.example.com
+vm_network1_ip: 192.168.150.50
+vm_network1_netmask: 255.255.255.0
+vm_network1_gateway: 192.168.150.1
+

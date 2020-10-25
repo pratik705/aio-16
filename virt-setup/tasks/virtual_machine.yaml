@@ -1,0 +1,65 @@
+- name: Create a directory for Virtual Machines
+  become: yes
+  file:
+    path: "{{ vm_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+    recurse: yes
+
+- name: Create a Virtual Machine disk file
+  shell: qemu-img create -f qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
+
+- name: Register rhel-guest-image-7 name
+  shell:  ls /usr/share/rhel-guest-image-7/ | grep qcow2
+  register: vm
+
+- name: Move rhel7 base image
+  shell: mv /usr/share/rhel-guest-image-7/{{ vm.stdout_lines }} {{ vm_directory}}/{{ vm.stdout_lines }}
+
+- name: Set root password
+  shell: virt-customize -a {{ vm_directory}}/{{ vm.stdout_lines }} --root-password password:{{ vm_root_password }}
+
+- name: Remove cloud init
+  shell: virt-customize -a {{ vm_directory}}/{{ vm.stdout_lines }} --run-command 'yum remove cloud-init* -y'
+
+- name: Create virtual machine from backing file
+  shell: qemu-img create -f qcow2 -b {{ vm_directory }}/{{ vm.stdout_lines }} {{ vm_directory }}/{{ vm_name }}.qcow2
+
+- name: Set hostname
+  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command 'hostnamectl set-hostname {{ vm_hostname }}'
+  ignore_errors: yes
+
+- name: Clear ifcfg-eth0 file
+  shell: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command 'rm /etc/sysconfig/network-scripts/ifcfg-eth0 '
+  ignore_errors: yes
+
+- name: Set ifcfg-eth0 file
+  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'echo {{ item }}  >> /etc/sysconfig/network-scripts/ifcfg-eth0 '
+  with_items: 
+    - DEVICE="eth0"
+    - ONBOOT="yes"
+    - TYPE="Ethernet"
+    - PEERDNS="yes"
+    - IPV6INIT="no"
+    - IPADDR={{ vm_network1_ip }}
+    - NETMASK={{ vm_network1_netmask }}
+    - GATEWAY={{ vm_network1_gateway }}
+    - BOOTPROTO="static"
+    - DNS1={{ vm_network1_gateway }}
+  ignore_errors: yes
+
+- name: Set ifcfg-eth1 file
+  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'echo {{ item }}  >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+  with_items:
+    - DEVICE="eth1"
+    - ONBOOT="yes"
+    - TYPE="Ethernet"
+    - PEERDNS="yes"
+    - IPV6INIT="no"
+    - BOOTPROTO="none"
+  ignore_errors: yes
+
+- name: prepare | boot vm
+  shell: virt-install --ram {{ vm_memory_size }}  --vcpus {{ vm_cpu_count }}  --os-variant=rhel8.0 --disk path={{ vm_directory}}/{{ vm_name }}.qcow2,device=disk,bus=virtio,format=qcow2 --network network={{ network1_name }},model=virtio  --network network={{ network2_name }},model=virtio --graphics none --console pty,target_type=serial --extra-args='console=ttyS0 --hvm --name {{ vm_name }}
