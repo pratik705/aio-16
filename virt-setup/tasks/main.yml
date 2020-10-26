@@ -3,11 +3,6 @@
 - name: Install packages
   include_tasks: packages.yaml
 
-- name: Configure storage pool
-  include_tasks: storage_pool.yaml
-  tags:
-    - virt_pool
-
 - name: Configure networks
   import_tasks: networks.yaml
   tags:
@@ -22,4 +17,3 @@
   include_tasks:  virtual_machine.yaml
   tags:
     - create_vm
-    - launch_vm

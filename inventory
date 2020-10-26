@@ -1,0 +1,5 @@
+[local]
+localhost ansible_connection=local
+[aio]
+192.168.150.114 ansible_python_interpreter=/usr/libexec/platform-python
+192.168.150.165 ansible_python_interpreter=/usr/libexec/platform-python

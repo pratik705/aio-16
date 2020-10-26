@@ -9,19 +9,15 @@ virt_packages:
   - qemu-img
   - libguestfs-tools
   - libguestfs-xfs
-storage_pool_name: "rhosp"
-storage_pool_directory: /opt/test
 network1_name: "osp_mgmt"
 network2_name: "osp"
 rhel8_qcow2_file: /root/rhel-8.2-x86_64-kvm.qcow2
+baremetal_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC77itpxNXU6LMGJipHhdmix3u1hKeNfrmJ6nuyog29vZlFIA8MjcfpKziwcI5uKpDnc5Si/d4l+KX+XlN+ok8Eu7EbdAMrQ3b4Sjj7Do6/kPTvA/MXGSaKVpyxj8Fy09vH3WCoAshX49D2MwIUusq27On9C0gXuYK+1S7KUlkGqQ== root@616580-director01.rpctnd1.iad3.com"
 vm_directory: /opt/
 vm_name: aio-16
 vm_size: 60G
 vm_root_password: RedHat1!
 vm_hostname: aio-16.example.com
-vm_network1_ip: 192.168.150.50
-vm_network1_netmask: 255.255.255.0
-vm_network1_gateway: 192.168.150.1
 vm_memory_size: 15000
 vm_cpu_count: 4
 
