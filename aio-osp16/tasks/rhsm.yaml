@@ -1,22 +1,7 @@
-  vars_prompt:
-
-    - name: username
-      prompt: What is your username?
-      private: no
-
-    - name: password
-      prompt: What is your password?
-
-  tasks:
-
-    - name: Print a message
-      ansible.builtin.debug:
-        msg: 'Logging in as {{ username }}'
-
 - name: Register the system to Red Hat
   redhat_subscription:
     state: present
-    username: {{ 
-    password: somepass
+    username: {{ rh_username }} 
+    password: {{ rh_password }}
     pool_ids:
-      - 0123456789abcdef0123456789abcdef
+      - {{ rh_pool_id }}

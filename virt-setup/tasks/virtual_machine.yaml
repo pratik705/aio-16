@@ -10,38 +10,56 @@
 - name: Create a Virtual Machine disk file
   shell: qemu-img create -f qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
 
-- name: Move rhel8 base image
-  shell: mv {{ rhel8_qcow2_file }} {{ vm_directory}}/rhel8_base.qcow2
+#- name: Move rhel8 base image
+#  shell: mv {{ rhel8_qcow2_file }} {{ vm_directory}}/{{ vm_name }}.qcow2
+
+- name: Push base image to the VM disk
+  shell: virt-resize -v  --expand /dev/sda3 {{ rhel8_qcow2_file }} {{ vm_directory}}/{{ vm_name }}.qcow2
+  environment:
+    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_BACKEND: direct
+  ignore_error: yes
+  tags:
+    - rhel8_qcow2_workaround
+
+- name: Expand root parition of the VM
+  shell:  virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
+  environment:
+    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_BACKEND: direct
+  ignore_error: yes
+  tags:
+    - rhel8_qcow2_workaround
 
 - name: Set root password
-  shell: virt-customize -a {{ vm_directory}}/rhel8_base.qcow2 --root-password password:{{ vm_root_password }}
+  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }}
   environment:
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
     - rhel8_qcow2_workaround
 
-- name: Remove cloud init
-  shell: virt-customize -a {{ vm_directory}}/rhel8_base.qcow2 --run-command 'yum remove cloud-init* -y'
-  environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
-    LIBGUESTFS_BACKEND: direct
-  tags:
-    - rhel8_qcow2_workaround
+#- name: Remove cloud init
+#  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'yum remove cloud-init* -y'
+#  environment:
+#    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+#    LIBGUESTFS_BACKEND: direct
+#  tags:
+#    - rhel8_qcow2_workaround
 
-- name: Create virtual machine from backing file
-  shell: qemu-img create -f qcow2 -b {{ vm_directory}}/rhel8_base.qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
-  tags:
-    - create_vm
+#- name: Create virtual machine from backing file
+#  shell: qemu-img create -f qcow2 -b {{ vm_directory}}/rhel8_base.qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
+#  tags:
+#    - create_vm
 
-- name: Set hostname
-  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command 'hostnamectl set-hostname {{ vm_hostname }}'
-  ignore_errors: yes
-  environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
-    LIBGUESTFS_BACKEND: direct
-  tags:
-    - rhel8_qcow2_workaround
+#- name: Set hostname
+#  command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command 'hostnamectl set-hostname --static {{ vm_hostname }}'
+#  ignore_errors: yes
+#  environment:
+#    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+#    LIBGUESTFS_BACKEND: direct
+#  tags:
+#    - rhel8_qcow2_workaround
 
 - name: SSH fix
   command: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config" --selinux-relabel

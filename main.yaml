@@ -1,5 +1,19 @@
 ---
-- name: Deploy AIO
+- name: Deploy a virtual machine for AIO
   hosts: local
   roles:
     - virt-setup
+
+#- name: Deploy AIO
+#  hosts: aio
+#  vars_prompt:
+#    - name: rh_username
+#      prompt: RH username:
+#      private: no
+#    - name: rh_password
+#      prompt: RH password:
+#      private: yes
+#    - name: rh_pool_id
+#      prompt: RH pool ID:
+#  roles:
+#    - aio-osp16
