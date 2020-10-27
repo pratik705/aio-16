@@ -1,0 +1,12 @@
+- name: Set hostname
+  hostname:
+    name: {{ server_hostname }}
+
+- name: Add a stack user
+  user:
+    name: stack
+    shell: /bin/bash
+    groups: wheel
+    append: yes
+
+

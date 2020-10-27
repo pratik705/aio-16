@@ -17,7 +17,6 @@ vm_directory: /opt/
 vm_name: aio-16
 vm_size: 60G
 vm_root_password: RedHat1!
-vm_hostname: aio-16.example.com
 vm_memory_size: 15000
 vm_cpu_count: 4
 
