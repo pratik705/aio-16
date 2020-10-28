@@ -95,7 +95,7 @@
 - name: Update inventory file
   ini_file:
     path: inventory
-    section: aio
+    section: aio-osp
     option: "{{ vm_ip.stdout }} ansible_python_interpreter=/usr/libexec/platform-python"
     allow_no_value: yes
 

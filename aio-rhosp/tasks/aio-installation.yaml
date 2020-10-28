@@ -1,0 +1,28 @@
+- name: Login to the RH docker registry
+  shell: podman login -u {{ rhsm_username }} -p {{ rhsm_password }} {{ rh_docker_registry }}
+
+- name: Prep containers parameters file
+  template:
+    src: containers-prepare-parameters.j2
+    dest: /home/stack/containers-prepare-parameters.yaml
+
+- name: Prep standalone parameters file
+  template:
+    src: standalone_parameters.j2
+    dest: /home/stack/standalone_parameters.yaml
+
+- name: Prep deployment script
+  template:
+    src: deploy.j2
+    dest: /home/stack/deploy.sh
+
+- name: Deploy AIO RHOSP
+  shell: sh /home/stack/deploy.sh
+  register: deploy_sh
+
+- name: Debug deploy_sh
+  debug:
+    msg: "{{ deploy_sh }}"
+  
+
+  

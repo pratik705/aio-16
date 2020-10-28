@@ -1,0 +1,9 @@
+---
+# tasks file for aio-rhosp
+#- name: Prep the server
+#  include_tasks: server_prep.yaml
+
+- name: Install AIO OSP
+  include_tasks: aio-installation.yaml
+
+

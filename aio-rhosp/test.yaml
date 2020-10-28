@@ -1,0 +1,14 @@
+---
+- 
+  hosts: aio-rhosp
+  tasks:
+  - name: Reboot the server
+    shell: sleep 5 && /sbin/shutdown -r now
+    async: 300
+    poll: 0
+  - name: Wait for the reboot
+    delegate_to: localhost
+    wait_for:
+      host: "{{ ansible_all_ipv4_addresses[0] }}"
+      port: 22
+      delay: 30

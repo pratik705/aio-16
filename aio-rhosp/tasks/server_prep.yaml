@@ -1,0 +1,73 @@
+- name: Set hostname
+  hostname:
+    name: "{{ server_hostname }}"
+
+- name: Add a stack user
+  user:
+    name: stack
+    shell: /bin/bash
+    groups: wheel
+    append: yes
+
+#- name: RH username
+#  pause:
+#    prompt: "RH username"
+#  register: rhsm_username
+#  when: rhsm_register == true
+ 
+#- name: RH password
+#  pause:
+#    prompt: "RH password"
+#  register: rhsm_password
+#  echo: no
+#  when: rhsm_register == true
+ 
+#- name: RHSM pool ID
+#  pause:
+#    prompt: "RHSM Pool ID"
+#  register: rhsm_pool_id
+#  echo: no
+#  when: rhsm_register == true
+
+- name: Check if the system is already registered
+  shell: subscription-manager status
+  register: rhsm_status
+  ignore_errors: true
+  
+- name: Debug rhsm_status
+  debug:
+    msg: "{{ rhsm_status.rc }}"
+
+- name: Register the server to Red Hat
+  shell: subscription-manager register --user {{ rhsm_username }} --password {{ rhsm_password }} --auto-attach
+  when: rhsm_register == true and rhsm_status.rc != 0
+#
+- name: Lock RHEL version
+  shell: subscription-manager release --set=8.2
+#
+- name: Enable RHOSP repositories
+  shell: subscription-manager repos --enable {{ item }}
+  with_items: "{{ rhosp_repos }}"
+#
+- name: Install required utils
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages }}"
+
+- name: Update the system
+  package:
+    name: '*'
+    state: latest
+
+- name: Reboot the server
+  shell: sleep 5 && /sbin/shutdown -r now
+  async: 300
+  poll: 0
+
+- name: Wait for the reboot
+  delegate_to: localhost
+  wait_for:
+    host: "{{ ansible_all_ipv4_addresses[0] }}"
+    port: 22
+    delay: 40

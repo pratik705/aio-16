@@ -1,0 +1,19 @@
+parameter_defaults:
+  CloudName: {{ aio_osp_ip }}
+  CloudDomain: {{ aio_osp_domain }}
+  ControlPlaneStaticRoutes: []
+  Debug: true
+  DeploymentUser: stack
+  DnsServers:
+    - {{ aio_dns_server }} 
+  DockerInsecureRegistryAddress:
+    - {{ aio_osp_ip }}:8787
+  NeutronPublicInterface: {{ aio_osp_interface }}
+  NeutronDnsDomain: localdomain
+  NeutronBridgeMappings: datacentre:br-ctlplane
+  NeutronPhysicalBridge: br-ctlplane
+  StandaloneEnableRoutedNetworks: false
+  StandaloneHomeDir: /home/stack
+  StandaloneLocalMtu: 1500
+  StandaloneExtraConfig:
+    NovaComputeLibvirtType: {{ aio_osp_libvirt_type }}

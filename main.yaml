@@ -1,19 +1,25 @@
 ---
-- name: Deploy a virtual machine for AIO
-  hosts: local
-  roles:
-    - virt-setup
+#- name: Deploy a virtual machine for AIO
+#  hosts: local
+#  roles:
+#    - virt-setup
 
-#- name: Deploy AIO
-#  hosts: aio
+- name: Deploy AIO RHOSP
+  hosts: aio-rhosp
 #  vars_prompt:
-#    - name: rh_username
-#      prompt: RH username:
+#    - name: rhsm_username
+#      prompt: RH username
 #      private: no
-#    - name: rh_password
-#      prompt: RH password:
+#      when: "{{ rhsm_register }}" = true
+#    - name: rhsm_password
+#      prompt: RH password
 #      private: yes
-#    - name: rh_pool_id
-#      prompt: RH pool ID:
+#      when: "{{ rhsm_register }}" = true
+#    - name: rhsm_pool_id
+#      prompt: RH pool ID
+#      private: no
+#      when: "{{ rhsm_register }}" = true
+  roles:
+    - aio-rhosp
 #  roles:
 #    - aio-osp16
