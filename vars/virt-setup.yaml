@@ -1,10 +1,11 @@
-network1_name: "osp_mgmt1"
-network2_name: "osp1"
+## Variables to setup virtulization ont he baremetal and deploy VM
+network1_name: "osp_mgmt"
+network2_name: "osp"
 rhel8_qcow2_file: /root/rhel-8.2-x86_64-kvm.qcow2
 baremetal_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC77itpxNXU6LMGJipHhdmix3u1hKeNfrmJ6nuyog29vZlFIA8MjcfpKziwcI5uKpDnc5Si/d4l+KX+XlN+ok8Eu7EbdAMrQ3b4Sjj7Do6/kPTvA/MXGSaKVpyxj8Fy09vH3WCoAshX49D2MwIUusq27On9C0gXuYK+1S7KUlkGqQ== root@616580-director01.rpctnd1.iad3.com"
 vm_directory: /opt/
-vm_name: aio-15
+vm_name: aio-16
 vm_size: 50G
-vm_root_password: RedHat2!
-vm_memory_size: 13000
-vm_cpu_count: 3
+vm_root_password: RedHat1!
+vm_memory_size: 20000
+vm_cpu_count: 4

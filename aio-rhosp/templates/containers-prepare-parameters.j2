@@ -25,5 +25,5 @@ parameter_defaults:
     tag_from_label: '{version}-{release}'
   ContainerImageRegistryCredentials:
     registry.redhat.io:
-      {{ rhsm_username }}: "{{ rhsm_password }}"
+      {{ rh_username.user_input }}: "{{ rh_password.user_input }}"
   ContainerImageRegistryLogin: true

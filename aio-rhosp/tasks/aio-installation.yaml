@@ -1,5 +1,16 @@
+- name: RH username to login to the RH docker registry
+  pause:
+    prompt: "RH username"
+  register: rh_username
+
+- name: RH password to login to the RH docker registry
+  pause:
+    prompt: "RH password"
+    echo: no
+  register: rh_password
+
 - name: Login to the RH docker registry
-  shell: podman login -u {{ rhsm_username }} -p {{ rhsm_password }} {{ rh_docker_registry }}
+  shell: podman login -u {{ rh_username.user_input }} -p {{ rh_password.user_input }} {{ rh_docker_registry }}
 
 - name: Prep containers parameters file
   template:
@@ -19,10 +30,3 @@
 - name: Deploy AIO RHOSP
   shell: sh /home/stack/deploy.sh
   register: deploy_sh
-
-- name: Debug deploy_sh
-  debug:
-    msg: "{{ deploy_sh }}"
-  
-
-  

@@ -1,0 +1,1 @@
+{"localhost": [["inc tasks", {"reason": "Unable to retrieve file contents\nCould not find or access '/root/data/playground/aio-16/virt-setup/test1.yaml' on the Ansible Controller.\nIf you are using a module and expect the file to exist on the remote, see the remote_src option"}]]}

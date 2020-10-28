@@ -1,0 +1,4 @@
+## AIO RHOSP variables
+aio_hostname: aio-16.example.com
+aio_domain: rpc.rackspace.com
+aio_libvirt_type: qemu

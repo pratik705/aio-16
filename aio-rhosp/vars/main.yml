@@ -1,10 +1,6 @@
 ---
 # vars file for aio-rhosp
-server_hostname: aio-16.example.com
-rhsm_register: true
-rhsm_username: xxxx
-rhsm_password: xxxx
-rhsm_pool_id: xxxx
+aio_hostname: aio-16.example.com
 rhosp_repos:
   - rhel-8-for-x86_64-baseos-eus-rpms 
   - rhel-8-for-x86_64-appstream-eus-rpms
@@ -13,13 +9,12 @@ rhosp_repos:
   - openstack-16.1-for-rhel-8-x86_64-rpms
   - fast-datapath-for-rhel-8-x86_64-rpms
   - rhel-8-for-x86_64-highavailability-rpms
-packages:
+aio_packages:
   - dnf-utils
   - python3-tripleoclient
-
 rh_docker_registry: registry.redhat.io
-aio_osp_ip: 192.168.200.10
-aio_osp_domain: rpc.rackspace.com
+aio_ip: 192.168.200.10
+aio_domain: rpc.rackspace.com
 aio_dns_server: 192.168.150.1
-aio_osp_interface: eth1
-aio_osp_libvirt_type: qemu
+aio_interface: eth1
+aio_libvirt_type: qemu

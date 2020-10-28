@@ -1,6 +1,6 @@
 - name: Set hostname
   hostname:
-    name: "{{ server_hostname }}"
+    name: "{{ aio_hostname }}"
 
 - name: Add a stack user
   user:
@@ -8,26 +8,6 @@
     shell: /bin/bash
     groups: wheel
     append: yes
-
-#- name: RH username
-#  pause:
-#    prompt: "RH username"
-#  register: rhsm_username
-#  when: rhsm_register == true
- 
-#- name: RH password
-#  pause:
-#    prompt: "RH password"
-#  register: rhsm_password
-#  echo: no
-#  when: rhsm_register == true
- 
-#- name: RHSM pool ID
-#  pause:
-#    prompt: "RHSM Pool ID"
-#  register: rhsm_pool_id
-#  echo: no
-#  when: rhsm_register == true
 
 - name: Check if the system is already registered
   shell: subscription-manager status
@@ -38,32 +18,60 @@
   debug:
     msg: "{{ rhsm_status.rc }}"
 
+- name: RH username
+  pause:
+    prompt: "RH username"
+  register: rhsm_username
+  when: rhsm_status.rc != 0
+
+- name: RH password
+  pause:
+    prompt: "RH password"
+    echo: no
+  register: rhsm_password
+  when: rhsm_status.rc != 0
+
+#- name: RHSM pool ID
+#  pause:
+#    prompt: "RHSM Pool ID"
+#  register: rhsm_pool_id
+#  echo: no
+#  when: rhsm_status.rc != 0
+
 - name: Register the server to Red Hat
-  shell: subscription-manager register --user {{ rhsm_username }} --password {{ rhsm_password }} --auto-attach
-  when: rhsm_register == true and rhsm_status.rc != 0
+  shell: subscription-manager register --user {{ rhsm_username.user_input }} --password {{ rhsm_password.user_input }} --auto-attach
+  when: rhsm_status.rc != 0
 #
 - name: Lock RHEL version
   shell: subscription-manager release --set=8.2
 #
+#- name: Enable RHOSP repositories
+#  shell: subscription-manager repos --enable {{ item }}
+#  with_items: "{{ rhosp_repos }}"
+
 - name: Enable RHOSP repositories
-  shell: subscription-manager repos --enable {{ item }}
+  rhsm_repository:
+    name: "{{ item }}"
+    state: present
   with_items: "{{ rhosp_repos }}"
-#
-- name: Install required utils
+
+- name: Install required packages
   package:
     name: "{{ item }}"
     state: present
-  with_items: "{{ packages }}"
+  with_items: "{{ aio_packages }}"
 
 - name: Update the system
   package:
     name: '*'
     state: latest
+  register: systemupdate
 
 - name: Reboot the server
   shell: sleep 5 && /sbin/shutdown -r now
   async: 300
   poll: 0
+  when: systemupdate.changed
 
 - name: Wait for the reboot
   delegate_to: localhost
@@ -71,3 +79,4 @@
     host: "{{ ansible_all_ipv4_addresses[0] }}"
     port: 22
     delay: 40
+  when: systemupdate.changed
