@@ -30,3 +30,7 @@
 - name: Deploy AIO RHOSP
   shell: sh /home/stack/deploy.sh
   register: deploy_sh
+
+- name: Installation debug
+  debug:
+    msg: "{{ deploy_sh }}"

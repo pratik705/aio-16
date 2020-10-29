@@ -17,3 +17,4 @@
   include_tasks:  virtual_machine.yaml
   tags:
     - create_vm
+    - update_inventory
