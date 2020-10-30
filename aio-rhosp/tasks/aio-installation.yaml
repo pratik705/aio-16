@@ -2,35 +2,68 @@
   pause:
     prompt: "RH username"
   register: rh_username
+  tags:
+    - deploy_aio_rhosp
 
 - name: RH password to login to the RH docker registry
   pause:
     prompt: "RH password"
     echo: no
   register: rh_password
+  tags:
+    - deploy_aio_rhosp
 
 - name: Login to the RH docker registry
   shell: podman login -u {{ rh_username.user_input }} -p {{ rh_password.user_input }} {{ rh_docker_registry }}
+  tags:
+    - deploy_aio_rhosp
 
 - name: Prep containers parameters file
   template:
     src: containers-prepare-parameters.j2
     dest: /home/stack/containers-prepare-parameters.yaml
+  tags:
+    - deploy_aio_rhosp
 
 - name: Prep standalone parameters file
   template:
     src: standalone_parameters.j2
     dest: /home/stack/standalone_parameters.yaml
+  tags:
+    - deploy_aio_rhosp
 
 - name: Prep deployment script
   template:
     src: deploy.j2
     dest: /home/stack/deploy.sh
+  tags:
+    - deploy_aio_rhosp
 
 - name: Deploy AIO RHOSP
   shell: sh /home/stack/deploy.sh
   register: deploy_sh
+  tags:
+    - deploy_aio_rhosp
+
+- name: Installation status
+  stat:
+    path: /home/stack/.config/openstack/clouds.yaml
+  register: file_details
+  tags:
+    - deploy_aio_rhosp
 
 - name: Installation debug
   debug:
     msg: "{{ deploy_sh }}"
+  when: file_details.stat.exists == False
+  tags:
+    - deploy_aio_rhosp
+
+- name: Display successful 
+  debug:
+    msg: >
+         Deployment successful!
+         The clouds.yaml file is at /home/stack/config/openstack/clouds.yaml. Use `export OS_CLOUD=standalone` before running the openstack command.
+  when: file_details.stat.exists
+  tags:
+    - deploy_aio_rhosp

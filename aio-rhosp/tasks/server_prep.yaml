@@ -1,6 +1,8 @@
 - name: Set hostname
   hostname:
     name: "{{ aio_hostname }}"
+  tags:
+    - deploy_aio_rhosp
 
 - name: Add a stack user
   user:
@@ -8,57 +10,89 @@
     shell: /bin/bash
     groups: wheel
     append: yes
+  tags:
+    - deploy_aio_rhosp
 
 - name: Check if the system is already registered
   shell: subscription-manager status
   register: rhsm_status
   ignore_errors: true
+  tags:
+    - deploy_aio_rhosp
   
 - name: Debug rhsm_status
   debug:
     msg: "{{ rhsm_status.rc }}"
+  tags:
+    - deploy_aio_rhosp
 
 - name: RH username
   pause:
     prompt: "RH username"
   register: rhsm_username
-  when: rhsm_status.rc != 0
+  when: rhsm_status.rc != 0 
+  tags:
+    - deploy_aio_rhosp
 
 - name: RH password
   pause:
     prompt: "RH password"
     echo: no
   register: rhsm_password
-  when: rhsm_status.rc != 0
+  when: rhsm_status.rc != 0 
+  tags:
+    - deploy_aio_rhosp
 
 - name: RH Pool ID
   pause:
     prompt: "RH pool ID"
   register: rhsm_pool_id
-  when: rhsm_status.rc != 0
+  when: rhsm_status.rc != 0 
+  tags:
+    - deploy_aio_rhosp
 
 - name: Register the server to Red Hat
   shell: subscription-manager register --user {{ rhsm_username.user_input }} --password {{ rhsm_password.user_input }}
   when: rhsm_status.rc != 0
+  tags:
+    - deploy_aio_rhosp
 
 - name: Subscribe the system to the pool
-  shell: subscription-manager attach --pool={{ rhsm_pool_id }}
+  shell: subscription-manager attach --pool={{ rhsm_pool_id.user_input }}
   when: rhsm_status.rc != 0
+  tags:
+    - deploy_aio_rhosp
+
+- name: Disable the repos
+  shell: subscription-manager repos --disable=*
+  tags:
+    - deploy_aio_rhosp
 
 - name: Lock RHEL version
   shell: subscription-manager release --set=8.2
+  tags:
+    - deploy_aio_rhosp
+
+- name: Enable RHEL base repo
+  shell: subscription-manager repos --enable=rhel-8-for-x86_64-appstream-eus-rpms --enable=rhel-8-for-x86_64-baseos-eus-rpms
+  tags:
+    - deploy_aio_rhosp
 
 - name: Update the system
   package:
     name: '*'
     state: latest
   register: systemupdate
+  tags:
+    - deploy_aio_rhosp
 
 - name: Reboot the server
   shell: sleep 5 && /sbin/shutdown -r now
   async: 300
   poll: 0
   when: systemupdate.changed
+  tags:
+    - deploy_aio_rhosp
 
 - name: Wait for the reboot
   delegate_to: localhost
@@ -67,15 +101,21 @@
     port: 22
     delay: 40
   when: systemupdate.changed
+  tags:
+    - deploy_aio_rhosp
 
 - name: Enable RHOSP repositories
   rhsm_repository:
     name: "{{ item }}"
     state: present
   with_items: "{{ rhosp_repos }}"
+  tags:
+    - deploy_aio_rhosp
 
 - name: Install required packages
   package:
     name: "{{ item }}"
     state: present
   with_items: "{{ aio_packages }}"
+  tags:
+    - deploy_aio_rhosp

@@ -6,9 +6,13 @@
     group: root
     mode: 0775
     recurse: yes
+  tags:
+    - deploy_vm
 
 - name: Create a Virtual Machine disk file
   shell: qemu-img create -f qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
+  tags:
+    - deploy_vm
 
 - name: Push base image to the VM disk
   shell: virt-resize -v  --expand /dev/sda3 {{ rhel8_qcow2_file }} {{ vm_directory}}/{{ vm_name }}.qcow2
@@ -16,7 +20,7 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: Expand root parition of the VM
   shell:  virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
@@ -24,7 +28,7 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: Set root password
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }}
@@ -32,7 +36,7 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: Remove cloud init
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'yum remove cloud-init* -y'
@@ -40,7 +44,7 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: SSH fix
   shell: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config" --ssh-inject "root:string:{{ baremetal_ssh_key }}" --selinux-relabel
@@ -48,7 +52,7 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: Set ifcfg-eth1 file
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'echo {{ item }}  >> /etc/sysconfig/network-scripts/ifcfg-eth1'
@@ -63,12 +67,12 @@
     LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
     LIBGUESTFS_BACKEND: direct
   tags:
-    - rhel8_qcow2_workaround
+    - deploy_vm
 
 - name: Boot VM
   shell: virt-install --ram {{ vm_memory_size }}  --vcpus {{ vm_cpu_count }}  --os-variant=rhel8.0 --disk path={{ vm_directory}}/{{ vm_name }}.qcow2,device=disk,bus=virtio,format=qcow2 --network network={{ network1_name }},model=virtio  --network network={{ network2_name }},model=virtio --noautoconsole --vnc --hvm --import --name {{ vm_name }}
   tags:
-    - create_vm
+    - deploy_vm
 
 - name: Check if the instance is in running state
   virt:
@@ -77,24 +81,28 @@
   register: vm_state
   retries: 10
   until: vm_state.status == "running"
+  tags:
+    - deploy_vm
 
 - name: debug output
   debug:
     msg: "{{ vm_state.status }}"
-
+  tags:
+    - deploy_vm
+  
 - name: Get IP addr
   shell: virsh domifaddr {{ vm_name }} --interface vnet0 | awk '{print $4}' | egrep ^[0-9] |cut -d'/' -f1
   retries: 20
   register: vm_ip
   until: vm_ip.stdout != ""
   tags:
-    - update_inventory
+    - deploy_vm
 
 - name: debug output
   debug:
     msg: "{{ vm_ip.stdout }}"
   tags:
-    - update_inventory
+    - deploy_vm
 
 - name: Clean aio-rhosp inventory
   ini_file:
@@ -102,7 +110,7 @@
     section: aio-rhosp
     state: absent
   tags:
-    - update_inventory
+    - deploy_vm
 
 - name: Update inventory file
   ini_file:
@@ -111,7 +119,9 @@
     option: "{{ vm_ip.stdout }} ansible_python_interpreter=/usr/libexec/platform-python"
     allow_no_value: yes
   tags:
-    - update_inventory
+    - deploy_vm
 
 - name: Refresh the inventory
   meta: refresh_inventory
+  tags:
+    - deploy_vm

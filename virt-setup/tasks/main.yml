@@ -2,19 +2,20 @@
 # tasks file for virt-setup
 - name: Install packages
   include_tasks: packages.yaml
+  tags:
+    - deploy_vm
 
 - name: Configure networks
   import_tasks: networks.yaml
   tags:
-    - virt_network
+    - deploy_vm
 
 - name: Workaround rhel8 qcow2
   include_tasks: rhel8_qcow_workaround.yaml
-  tags: 
-    - rhel8_qcow2_workaround
+  tags:
+    - deploy_vm
 
 - name: Create a VM
   include_tasks:  virtual_machine.yaml
   tags:
-    - create_vm
-    - update_inventory
+    - deploy_vm

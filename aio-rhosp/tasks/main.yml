@@ -3,8 +3,10 @@
 
 - name: Prep the server
   include_tasks: server_prep.yaml
+  tags:
+    - deploy_aio_rhosp
 
 - name: Install AIO OSP
   include_tasks: aio-installation.yaml
-
-
+  tags:
+    - deploy_aio_rhosp

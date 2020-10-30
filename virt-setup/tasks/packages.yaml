@@ -2,11 +2,10 @@
   package:
     name: "{{ item }}"
     state: present
-  tags:
-    - packages
-    - kvm
   with_items:
     "{{ virt_packages }}"
+  tags:
+    - deploy_vm
 
 - name: Enable service libvirt, and start if not started
   service:
@@ -14,4 +13,4 @@
     enabled: yes
     state: started
   tags:
-    - kvm
+    - deploy_vm
