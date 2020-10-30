@@ -1,27 +1,33 @@
-- name: gather facts on existing networks
+- name: List networks
   virt_net:
-    command: facts
-  register: virt_networks
+    command: list_nets
+  register: net_list
   tags:
-    - deploy_vm
+  - deploy_vm
+
+- name: Network output
+  debug:
+    msg: "{{ net_list }}"
+  tags:
+  - deploy_vm
 
 - name: Create network1
   virt_net:
     command: define
     name: "{{ network1_name | default('osp_mgmt') }}"
     xml: '{{ lookup("template", "templates/network1.j2") }}'
-  when: virt_networks.ansible_facts.network1_name is not defined
+  when: network1_name not in net_list.list_nets
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Create network2
   virt_net:
     command: define
     name: "{{ network2_name | default(osp) }}"
     xml: '{{ lookup("template", "templates/network2.j2") }}'
-  when: virt_networks.ansible_facts.network2_name is not defined
+  when:  network2_name not in net_list.list_nets
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Autostart the network1
   virt_net:
@@ -29,7 +35,7 @@
     autostart: yes
     state: active
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Autostart the network2
   virt_net:
@@ -37,4 +43,4 @@
     autostart: yes
     state: active
   tags:
-    - deploy_vm
+  - deploy_vm

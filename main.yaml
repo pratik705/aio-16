@@ -3,12 +3,8 @@
   hosts: local
   roles:
     - virt-setup
-  tags:
-    - deploy_vm
 
 - name: Deploy AIO RHOSP
   hosts: aio-rhosp
   roles:
     - aio-rhosp
-  tags:
-    - deploy_aio_rhosp

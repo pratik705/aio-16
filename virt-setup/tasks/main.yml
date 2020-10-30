@@ -3,19 +3,17 @@
 - name: Install packages
   include_tasks: packages.yaml
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Configure networks
   import_tasks: networks.yaml
-  tags:
-    - deploy_vm
 
 - name: Workaround rhel8 qcow2
   include_tasks: rhel8_qcow_workaround.yaml
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Create a VM
   include_tasks:  virtual_machine.yaml
   tags:
-    - deploy_vm
+  - deploy_vm

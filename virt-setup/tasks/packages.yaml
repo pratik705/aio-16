@@ -5,7 +5,7 @@
   with_items:
     "{{ virt_packages }}"
   tags:
-    - deploy_vm
+  - deploy_vm
 
 - name: Enable service libvirt, and start if not started
   service:
@@ -13,4 +13,6 @@
     enabled: yes
     state: started
   tags:
-    - deploy_vm
+  - deploy_vm
+  - list_network
+  - check_service

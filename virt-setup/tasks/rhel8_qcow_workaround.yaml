@@ -15,6 +15,7 @@
 - name: RHEL8-Workaround-libguestfs - Extract the appliance
   unarchive:
     src: /opt/workaround/appliance-1.40.1.tar.xz
-    dest: "{{ ansible_env.HOME }}"
+    dest: /opt/workaround/
+    creates: /opt/workaround/appliance
   tags:
     - deploy_vm

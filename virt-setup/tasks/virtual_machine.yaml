@@ -4,20 +4,40 @@
     state: directory
     owner: root
     group: root
-    mode: 0775
     recurse: yes
+  tags:
+    - deploy_vm
+
+- name: Check if the Virtual Machine disk exist
+  stat:
+    path: "{{ vm_directory }}/{{ vm_name }}.qcow2"
+  register: vm_disk
+  tags:
+    - deploy_vm
+
+- name: List VM's
+  virt:
+    command: list_vms
+  register: list_vms
+  tags:
+    - deploy_vm
+
+- name: List output
+  debug:
+    msg: "{{ list_vms }}"
   tags:
     - deploy_vm
 
 - name: Create a Virtual Machine disk file
   shell: qemu-img create -f qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
+  when: vm_disk.stat.exists == False
   tags:
     - deploy_vm
 
 - name: Push base image to the VM disk
   shell: virt-resize -v  --expand /dev/sda3 {{ rhel8_qcow2_file }} {{ vm_directory}}/{{ vm_name }}.qcow2
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -25,7 +45,7 @@
 - name: Expand root parition of the VM
   shell:  virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -33,7 +53,7 @@
 - name: Set root password
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }}
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -41,7 +61,7 @@
 - name: Remove cloud init
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'yum remove cloud-init* -y'
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -49,7 +69,7 @@
 - name: SSH fix
   shell: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config" --ssh-inject "root:string:{{ baremetal_ssh_key }}" --selinux-relabel
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -64,13 +84,14 @@
     - IPV6INIT="no"
     - BOOTPROTO="none"
   environment:
-    LIBGUESTFS_PATH: "{{ ansible_env.HOME }}/appliance"
+    LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
 
 - name: Boot VM
   shell: virt-install --ram {{ vm_memory_size }}  --vcpus {{ vm_cpu_count }}  --os-variant=rhel8.0 --disk path={{ vm_directory}}/{{ vm_name }}.qcow2,device=disk,bus=virtio,format=qcow2 --network network={{ network1_name }},model=virtio  --network network={{ network2_name }},model=virtio --noautoconsole --vnc --hvm --import --name {{ vm_name }}
+  when: vm_name not in list_vms.list_vms
   tags:
     - deploy_vm
 

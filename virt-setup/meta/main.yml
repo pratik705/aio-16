@@ -1,8 +1,7 @@
 galaxy_info:
-  author: your name
-  description: your description
-  company: your company (optional)
-
+  author: Pratik Bandarkar
+  description: Role to deploy a virtual machine which can be used as standalone or pre-req to deploy all-in-one RHOSP 16.1
+  company: Company name 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
   # issue_tracker_url: http://example.com/issue/tracker

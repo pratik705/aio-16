@@ -1,7 +1,7 @@
 galaxy_info:
-  author: your name
-  description: your description
-  company: your company (optional)
+  author: Pratik Bandarkar
+  description: Role to deploy all in one Red Hat OpenStack 16.1
+  company: Company name
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
