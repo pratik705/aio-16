@@ -29,7 +29,7 @@
     - deploy_vm
 
 - name: Create a Virtual Machine disk file
-  shell: qemu-img create -f qcow2 {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
+  shell: qemu-img create -f qcow2 -o preallocation=falloc {{ vm_directory }}/{{ vm_name }}.qcow2 {{ vm_size }}
   when: vm_disk.stat.exists == False
   tags:
     - deploy_vm
