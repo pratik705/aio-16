@@ -43,23 +43,15 @@
     - deploy_vm
 
 - name: Expand root parition of the VM
-  shell:  virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
+  shell: virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
   environment:
     LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
 
-- name: Set root password
-  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }}
-  environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
-    LIBGUESTFS_BACKEND: direct
-  tags:
-    - deploy_vm
-
-- name: Remove cloud init
-  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'yum remove cloud-init* -y'
+- name: Set root password and remove cloud-init
+  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }} --uninstall cloud-init
   environment:
     LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
