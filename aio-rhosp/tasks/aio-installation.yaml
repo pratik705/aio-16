@@ -82,6 +82,6 @@
       - The clouds.yaml file is at /home/stack/.config/openstack/clouds.yaml.
       - Use `export OS_CLOUD=standalone` before running the openstack command.
       - "Horizon dashboard URL: http://{{ hostvars[inventory_hostname].facter_networking.interfaces['br-ctlplane'].bindings[0].address }}"
-  when: file_details.stat.exists
+  when: config_openstack_clouds_file.stat.exists.stat.exists
   tags:
     - deploy_aio_rhosp
