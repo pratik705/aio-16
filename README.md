@@ -13,7 +13,7 @@ If the tags are omitted then by-default it creates a virtual machine and further
 - **To build a RHEL8 virtual machine and all-in-one Red Hat OpenStack:**
   - Pre-requsite:
     - RHEL8 qcow2 disk image is pre-downloaded on the baremetal server(rhel8_qcow2_file: /root/rhel-8.2-x86_64-kvm.qcow2)
-    - Baremetal server where you want to build a virutal machine for all-in-one Red Hat OpenStack should have access to the Red Hat base packages(through Red Hat Network/Satellite/local repo) OR should have following packages installed:
+    - KVM host where you want to build a virutal machine for all-in-one Red Hat OpenStack should have access to the Red Hat base packages(through Red Hat Network/Satellite/local repo) **OR** should have following packages installed:
       - virt-install
       - libvirt-python
       - virt-install
@@ -22,6 +22,8 @@ If the tags are omitted then by-default it creates a virtual machine and further
       - qemu-img
       - libguestfs-tools
       - libguestfs-xfs
+
+    - You have Red Hat credentials and pool ID to register a RHEL8 virtual machine to Red Hat Network and login Red Hat docker registry. You will be prompted during the playbook execution.
     - Virtual machine should be able to subscribe to the following Red Hat repositories:
       - rhel-8-for-x86_64-baseos-eus-rpms
       - rhel-8-for-x86_64-appstream-eus-rpms
@@ -30,8 +32,6 @@ If the tags are omitted then by-default it creates a virtual machine and further
       - openstack-16.1-for-rhel-8-x86_64-rpms
       - fast-datapath-for-rhel-8-x86_64-rpms
       - rhel-8-for-x86_64-highavailability-rpms
-
-    - You have Red Hat credentials and pool ID to register a RHEL8 virtual machine to Red Hat Network and login Red Hat docker registry
   ```
   # ansible-playbook main.yaml -e @vars/virt-setup.yaml -e @vars/aio-rhosp.yaml
   ```
@@ -45,9 +45,7 @@ If the tags are omitted then by-default it creates a virtual machine and further
 ---
 - **To build a all-in-one Red Hat OpenStack on existing server:**
   - Pre-requsite:
-    - You have Red Hat credentials and pool ID to register a RHEL8 virtual machine to Red Hat Network and login Red Hat docker registry
-    OR
-    - Server is already registered to Red Hat
+    - You have Red Hat credentials and pool ID to register a RHEL8 virtual machine to Red Hat Network and login Red Hat docker registry. You will be prompted during the playbook execution. **OR** The server is already registered to Red Hat
     - Server has access to the following Red Hat repositories:
       - rhel-8-for-x86_64-baseos-eus-rpms
       - rhel-8-for-x86_64-appstream-eus-rpms
