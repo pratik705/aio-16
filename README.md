@@ -74,3 +74,13 @@ If the tags are omitted then by-default it creates a virtual machine and further
 | vm_size  | Size of the virtual machine disk   | No  | 50G      |
 | vm_memory_size  | Memory of the virtual machine  | No  | 20000      |
 | vm_cpu_count  | CPU count of the virtual machine   | No  | 4      |
+
+- vars/aio-rhosp.yaml
+
+| Variable Name  | Description  | Required  | Default |
+|----------------|--------------|-----------|---------|
+| aio_hostname  | Hostname of the server  | No  | aio-16.example.com  |
+| aio_domain | Domain name of the server   | No  | example.com       |
+| aio_libvirt_type | Virtlization type of the server.<br>* qemu - If you are deploying aio RHOSP on a virtual machine<br>* kvm - If you are deploying aio RHOSP on physical node  | No  | qemu       |
+| aio_interface | Interface of the server for aio RHOSP deployment.<br>Stick with the default value if you are deploying aio RHOSP on a KVM with RHEL8 qcow2 downloaded from Red Hat portal   | No  | eth1       |
+| aio_dns_server | DNS server IP/FQDN.<br>Stick with the default value if you are deploying a virtual machine and aio with the roles from this repository   | No  |   192.168.150.1     |
