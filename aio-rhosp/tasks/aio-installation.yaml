@@ -18,10 +18,25 @@
   tags:
     - deploy_aio_rhosp
 
+- name: Check if containers-prepare file exist
+  stat:
+    path: /home/stack/containers-prepare-parameters.yaml
+  register: containers_prepare_file
+  tags:
+    - deploy_aio_rhosp
+
 - name: Prep containers parameters file
   template:
     src: containers-prepare-parameters.j2
     dest: /home/stack/containers-prepare-parameters.yaml
+  when: containers_prepare_file.stat.exists == False
+  tags:
+    - deploy_aio_rhosp
+
+- name: Check if standalone_parameters file exist
+  stat:
+    path: /home/stack/standalone_parameters.yaml
+  register: standalone_parameters_file
   tags:
     - deploy_aio_rhosp
 
@@ -29,6 +44,7 @@
   template:
     src: standalone_parameters.j2
     dest: /home/stack/standalone_parameters.yaml
+  when: standalone_parameters_file.stat.exists == False
   tags:
     - deploy_aio_rhosp
 
@@ -48,22 +64,24 @@
 - name: Installation status
   stat:
     path: /home/stack/.config/openstack/clouds.yaml
-  register: file_details
+  register: config_openstack_clouds_file
   tags:
     - deploy_aio_rhosp
 
 - name: Installation debug
   debug:
     msg: "{{ deploy_sh }}"
-  when: file_details.stat.exists == False
+  when: config_openstack_clouds_file.stat.exists == False
   tags:
     - deploy_aio_rhosp
 
-- name: Display successful 
+- name: Deployment successful
   debug:
-    msg: >
-         Deployment successful!
-         The clouds.yaml file is at /home/stack/config/openstack/clouds.yaml. Use `export OS_CLOUD=standalone` before running the openstack command.
+    msg:
+      - Deployment successful!
+      - The clouds.yaml file is at /home/stack/.config/openstack/clouds.yaml.
+      - Use `export OS_CLOUD=standalone` before running the openstack command.
+      - "Horizon dashboard URL: http://{{ hostvars[inventory_hostname].facter_networking.interfaces['br-ctlplane'].bindings[0].address }}"
   when: file_details.stat.exists
   tags:
     - deploy_aio_rhosp

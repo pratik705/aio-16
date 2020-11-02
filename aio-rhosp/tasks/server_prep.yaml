@@ -20,12 +20,6 @@
   tags:
     - deploy_aio_rhosp
   
-- name: Debug rhsm_status
-  debug:
-    msg: "{{ rhsm_status.rc }}"
-  tags:
-    - deploy_aio_rhosp
-
 - name: RH username
   pause:
     prompt: "RH username"

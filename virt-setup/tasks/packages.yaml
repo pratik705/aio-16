@@ -14,5 +14,3 @@
     state: started
   tags:
   - deploy_vm
-  - list_network
-  - check_service

@@ -42,16 +42,16 @@
   tags:
     - deploy_vm
 
-- name: Expand root parition of the VM
-  shell: virt-customize -v -a {{ vm_directory}}/{{ vm_name }}.qcow2  --run-command 'xfs_growfs /'
-  environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
-    LIBGUESTFS_BACKEND: direct
+- name: VM root passwd prompt
+  pause:
+    prompt: "Virtual Machine root password"
+    echo: no
+  register: vm_root_password
   tags:
     - deploy_vm
 
 - name: Set root password and remove cloud-init
-  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password }} --uninstall cloud-init
+  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password.user_input }} --uninstall cloud-init
   environment:
     LIBGUESTFS_PATH: /opt/workaround/appliance
     LIBGUESTFS_BACKEND: direct
@@ -66,20 +66,20 @@
   tags:
     - deploy_vm
 
-- name: Set ifcfg-eth1 file
-  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'echo {{ item }}  >> /etc/sysconfig/network-scripts/ifcfg-eth1'
-  with_items:
-    - DEVICE="eth1"
-    - ONBOOT="yes"
-    - TYPE="Ethernet"
-    - PEERDNS="yes"
-    - IPV6INIT="no"
-    - BOOTPROTO="none"
-  environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
-    LIBGUESTFS_BACKEND: direct
-  tags:
-    - deploy_vm
+#- name: Set ifcfg-eth1 file
+#  shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --run-command 'echo {{ item }}  >> /etc/sysconfig/network-scripts/ifcfg-eth1'
+#  with_items:
+#    - DEVICE="eth1"
+#    - ONBOOT="yes"
+#    - TYPE="Ethernet"
+#    - PEERDNS="yes"
+#    - IPV6INIT="no"
+#    - BOOTPROTO="none"
+#  environment:
+#    LIBGUESTFS_PATH: /opt/workaround/appliance
+#    LIBGUESTFS_BACKEND: direct
+#  tags:
+#    - deploy_vm
 
 - name: Boot VM
   shell: virt-install --ram {{ vm_memory_size }}  --vcpus {{ vm_cpu_count }}  --os-variant=rhel8.0 --disk path={{ vm_directory}}/{{ vm_name }}.qcow2,device=disk,bus=virtio,format=qcow2 --network network={{ network1_name }},model=virtio  --network network={{ network2_name }},model=virtio --noautoconsole --vnc --hvm --import --name {{ vm_name }}
@@ -92,7 +92,7 @@
     command: status
     name: "{{ vm_name }}"
   register: vm_state
-  retries: 10
+  retries: 30
   until: vm_state.status == "running"
   tags:
     - deploy_vm
@@ -105,7 +105,7 @@
   
 - name: Get IP addr
   shell: virsh domifaddr {{ vm_name }} --interface vnet0 | awk '{print $4}' | egrep ^[0-9] |cut -d'/' -f1
-  retries: 20
+  retries: 30
   register: vm_ip
   until: vm_ip.stdout != ""
   tags:

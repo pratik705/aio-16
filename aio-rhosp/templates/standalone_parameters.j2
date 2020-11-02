@@ -1,5 +1,5 @@
 parameter_defaults:
-  CloudName: {{ aio_ip }}
+  CloudName: {{ facter_networking.interfaces[aio_interface].bindings[0].address }}
   CloudDomain: {{ aio_domain }}
   ControlPlaneStaticRoutes: []
   Debug: true
@@ -7,7 +7,7 @@ parameter_defaults:
   DnsServers:
     - {{ aio_dns_server }} 
   DockerInsecureRegistryAddress:
-    - {{ aio_ip }}:8787
+    - {{ facter_networking.interfaces[aio_interface].bindings[0].address }}:8787
   NeutronPublicInterface: {{ aio_interface }}
   NeutronDnsDomain: localdomain
   NeutronBridgeMappings: datacentre:br-ctlplane
