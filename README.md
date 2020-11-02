@@ -59,3 +59,18 @@ If the tags are omitted then by-default it creates a virtual machine and further
   ```
   # ansible-playbook main.yaml -e @vars/aio-rhosp.yaml  --tags deploy_aio_rhosp
   ```
+---
+## Variables:
+- vars/virt-setup.yaml
+
+| Variable Name  | Description  | Required  | Default |
+|----------------|--------------|-----------|---------|
+| network1_name  | Libvirt network name which will be used to access the virtual machine  | No  | osp_mgmt  |
+| network2_name  | Libvirt Network name which will be used to deploy Red Hat Open Stack   | No  | osp       |
+| rhel8_qcow2_file  | Absulte path of the RHEL8 qcow2 image   | Yes  | null       |
+| baremetal_ssh_key  | KVM host SSH public key to access the virtual machine   | Yes  | null       |
+| vm_directory  | The absulute path of the directory where the virtual machine disk will be stored   | No  | /opt      |
+| vm_name  | Name of the virtual machine   | No  | aio-16      |
+| vm_size  | Size of the virtual machine disk   | No  | 50G      |
+| vm_memory_size  | Memory of the virtual machine  | No  | 20000      |
+| vm_cpu_count  | CPU count of the virtual machine   | No  | 4      |
