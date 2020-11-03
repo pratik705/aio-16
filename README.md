@@ -8,6 +8,10 @@ This repo contains two roles. "virt-setup" and "aio-rhosp". The usage can be con
 
 If the tags are omitted then by-default it creates a virtual machine and further deploys all-in-one Red Hat OpenStack on top of it.
 
+- **Tested the installation on RHEL7.8 KVM host.**
+
+
+
 
 ## Usage:
 - **To build a RHEL8 virtual machine and all-in-one Red Hat OpenStack:**
