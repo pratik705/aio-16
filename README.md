@@ -82,3 +82,6 @@ If the tags are omitted then by-default it creates a virtual machine and further
 | aio_libvirt_type | Virtlization type of the server.<br><br>* qemu - If you are deploying aio RHOSP on a virtual machine<br>* kvm - If you are deploying aio RHOSP on physical node  | No  | qemu       |
 | aio_interface | Interface name of the server for aio RHOSP deployment.<br><br>Stick with the default value if you are deploying aio RHOSP on a KVM with RHEL8 qcow2 downloaded from Red Hat portal   | No  | eth1       |
 | aio_dns_server | DNS server IP/FQDN.<br><br>Stick with the default value if you are deploying a virtual machine and aio with the roles from this repository   | No  |   192.168.150.1     |
+---
+## Demo:
+[![asciicast](https://asciinema.org/a/370199.svg)](https://asciinema.org/a/370199)
