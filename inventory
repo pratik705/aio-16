@@ -2,4 +2,4 @@
 localhost ansible_connection=local
 
 [aio-rhosp]
-192.168.150.223 ansible_python_interpreter=/usr/libexec/platform-python
+192.168.150.18 ansible_python_interpreter=/usr/libexec/platform-python

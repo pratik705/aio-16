@@ -1,6 +1,6 @@
 ## AIO RHOSP variables
-aio_hostname: aio-16.rcp.rackspace.com
-aio_domain: rpc.rackspace.com
+aio_hostname: aio-16.example.com
+aio_domain: example.com
 aio_libvirt_type: qemu
 aio_interface: eth1
 aio_dns_server: 192.168.150.1

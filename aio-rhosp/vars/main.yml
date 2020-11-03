@@ -11,6 +11,7 @@ rhosp_repos:
   - rhel-8-for-x86_64-highavailability-rpms
 aio_packages:
   - dnf-utils
+  - facter
   - python3-tripleoclient
 rh_docker_registry: registry.redhat.io
 aio_domain: rpc.rackspace.com

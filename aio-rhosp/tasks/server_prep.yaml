@@ -20,26 +20,28 @@
   tags:
     - deploy_aio_rhosp
   
-- name: RH username
+- name: RH username to register the system
   pause:
-    prompt: "RH username"
+    prompt: "Enter RH username"
+    echo : no
   register: rhsm_username
   when: rhsm_status.rc != 0 
   tags:
     - deploy_aio_rhosp
 
-- name: RH password
+- name: RH password to register the system
   pause:
-    prompt: "RH password"
+    prompt: "Enter RH password"
     echo: no
   register: rhsm_password
   when: rhsm_status.rc != 0 
   tags:
     - deploy_aio_rhosp
 
-- name: RH Pool ID
+- name: RH Pool ID to register the system
   pause:
-    prompt: "RH pool ID"
+    prompt: "Enter RH pool ID"
+    echo: no
   register: rhsm_pool_id
   when: rhsm_status.rc != 0 
   tags:

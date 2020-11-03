@@ -1,6 +1,6 @@
 - name: RHEL8-Workaround-libguestfs - Create workaround directory
   file:
-    path: /opt/workaround
+    path: /tmp/aio_workaround
     state: directory
   tags:
     - deploy_vm
@@ -8,14 +8,14 @@
 - name: RHEL8-Workaround-libguestfs - Download libguestfs binary appliance
   get_url:
     url: https://download.libguestfs.org/binaries/appliance/appliance-1.40.1.tar.xz
-    dest: /opt/workaround
+    dest: /tmp/aio_workaround
   tags:
     - deploy_vm
 
 - name: RHEL8-Workaround-libguestfs - Extract the appliance
   unarchive:
-    src: /opt/workaround/appliance-1.40.1.tar.xz
-    dest: /opt/workaround/
-    creates: /opt/workaround/appliance
+    src: /tmp/aio_workaround/appliance-1.40.1.tar.xz
+    dest: /tmp/aio_workaround/
+    creates: /tmp/aio_workaround/appliance
   tags:
     - deploy_vm

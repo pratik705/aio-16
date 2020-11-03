@@ -37,14 +37,14 @@
 - name: Push base image to the VM disk
   shell: virt-resize -v  --expand /dev/sda3 {{ rhel8_qcow2_file }} {{ vm_directory}}/{{ vm_name }}.qcow2
   environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
+    LIBGUESTFS_PATH: /tmp/aio_workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
 
 - name: VM root passwd prompt
   pause:
-    prompt: "Virtual Machine root password"
+    prompt: "Set virtual machine root password"
     echo: no
   register: vm_root_password
   tags:
@@ -53,7 +53,7 @@
 - name: Set root password and remove cloud-init
   shell: virt-customize -a {{ vm_directory}}/{{ vm_name }}.qcow2 --root-password password:{{ vm_root_password.user_input }} --uninstall cloud-init
   environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
+    LIBGUESTFS_PATH: /tmp/aio_workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -61,7 +61,7 @@
 - name: SSH fix
   shell: virt-customize -a {{ vm_directory }}/{{ vm_name }}.qcow2 --run-command "sed -i 's/#MaxAuthTries [0-9]/MaxAuthTries = 8/' /etc/ssh/sshd_config" --ssh-inject "root:string:{{ baremetal_ssh_key }}" --selinux-relabel
   environment:
-    LIBGUESTFS_PATH: /opt/workaround/appliance
+    LIBGUESTFS_PATH: /tmp/aio_workaround/appliance
     LIBGUESTFS_BACKEND: direct
   tags:
     - deploy_vm
@@ -76,7 +76,7 @@
 #    - IPV6INIT="no"
 #    - BOOTPROTO="none"
 #  environment:
-#    LIBGUESTFS_PATH: /opt/workaround/appliance
+#    LIBGUESTFS_PATH: /tmp/aio_workaround/appliance
 #    LIBGUESTFS_BACKEND: direct
 #  tags:
 #    - deploy_vm
