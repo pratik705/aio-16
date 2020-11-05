@@ -50,6 +50,7 @@ If the tags are omitted then by-default it creates a virtual machine and further
 - **To build a all-in-one Red Hat OpenStack on existing server:**
   - Pre-requsite:
     - You have Red Hat credentials and pool ID to register a RHEL8 virtual machine to Red Hat Network and login Red Hat docker registry. You will be prompted during the playbook execution. **OR** The server is already registered to Red Hat
+    - Server has two interfaces. One to access the server and other to deploy Open Stack.
     - Server has access to the following Red Hat repositories:
       - rhel-8-for-x86_64-baseos-eus-rpms
       - rhel-8-for-x86_64-appstream-eus-rpms
