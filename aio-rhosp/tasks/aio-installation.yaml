@@ -1,5 +1,7 @@
 - name: Refresh the facts
   setup:
+  tags:
+    - deploy_aio_rhosp
 
 - name: RH username to login to the RH docker registry
   pause:
@@ -89,6 +91,8 @@
 
 - name: Refresh the facts
   setup:
+  tags:
+    - deploy_aio_rhosp
 
 - name: Deployment successful
   debug:
